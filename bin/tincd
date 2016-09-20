@@ -1,0 +1,30 @@
+#!/bin/bash
+
+for i in $(seq 1 $#); do
+    KEY=${@:$i:1}
+
+    case $KEY in
+        -c*)
+            if [ -n "${KEY#*c}" ]; then
+                CONFIGURATION_FOLDER=${KEY#*c}
+            else
+                CONFIGURATION_FOLDER=${@:$((i+1)):1}
+            fi
+        ;;
+
+        --config)
+            CONFIGURATION_FOLDER=${@:$((i+1)):1}
+        ;;
+
+        --config=*)
+            CONFIGURATION_FOLDER="${KEY#*=}"
+        ;;
+    esac
+done
+
+docker run \
+    -i \
+    -t=$([ -t 0 ] && echo "true" || echo "false") \
+    -v "${CONFIGURATION_FOLDER:-/etc/tinc}:${CONFIGURATION_FOLDER:-/etc/tinc}" \
+    --rm \
+    ${IMAGE:-timonier/tinc}:${TAG:-1.0.28} "$@"
