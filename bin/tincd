@@ -26,5 +26,7 @@ docker run \
     -i \
     -t=$([ -t 0 ] && echo "true" || echo "false") \
     -v "${CONFIGURATION_FOLDER:-/etc/tinc}:${CONFIGURATION_FOLDER:-/etc/tinc}" \
+    --cap-add NET_ADMIN \
+    --device=/dev/net/tun \
     --rm \
     ${IMAGE:-timonier/tinc}:${TAG:-1.0.28} "$@"

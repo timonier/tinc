@@ -1,4 +1,4 @@
-FROM debian:jessie
+FROM alpine:3.4
 MAINTAINER Morgan Auchede <morgan.auchede@gmail.com>
 
 ENV \
@@ -6,36 +6,36 @@ ENV \
 
 RUN set -x \
 
-    # Prepare system
-
-    && export DEBIAN_FRONTEND=noninteractive \
-
-    && apt-get update \
-
     # Install packages
 
-    && BUILD_DEPS="build-essential ca-certificates curl liblzo2-dev libssl-dev libz-dev" \
+    && apk add --no-cache --no-progress --virtual build_deps \
+           build-base \
+           curl \
+           libpcap-dev \
+           linux-headers \
+           lzo-dev \
+           openssl-dev \
+           zlib-dev \
 
-    && apt-get install -y --no-install-recommends \
-           $BUILD_DEPS \
-           liblzo2-2 \
-           libssl1.0.0 \
-           net-tools \
+    && apk add --no-cache --no-progress \
+           libpcap \
+           libcrypto1.0 \
+           lzo \
+           zlib \
 
     # Install tinc
 
     && curl -sL "https://www.tinc-vpn.org/packages/tinc-$TINC_VERSION.tar.gz" | tar fxz - -C /tmp \
-    && sh -c "cd /tmp/tinc-$TINC_VERSION && ./configure --enable-jumbograms --enable-lzo --enable-zlib --localstatedir=/var --prefix=/usr --sysconfdir=/etc" \
+    && sh -c "cd /tmp/tinc-$TINC_VERSION && ./configure --enable-jumbograms --enable-lzo --enable-tunemu --enable-zlib --localstatedir=/var --prefix=/usr --sysconfdir=/etc" \
     && make -C /tmp/tinc-$TINC_VERSION \
     && make -C /tmp/tinc-$TINC_VERSION install \
 
     # Clean
 
-    && apt-get remove -y --purge $BUILD_DEPS \
-    && apt-get autoremove -y --purge \
+    && apk del --no-progress \
+           build_deps \
 
     && rm -rf \
-           /tmp/* \
-           /var/lib/apt/lists/*
+           /tmp/*
 
 ENTRYPOINT [ "/usr/sbin/tincd" ]
