@@ -1,8 +1,10 @@
 # README
 
+A VPN daemon
+
 ## Installation
 
-Copy the script `bin/tincd` into your executable folder (like `/usr/local/bin` or `$HOME/bin`).
+Copy the script `bin/tincd` into your executable folder (like `/usr/local/bin` or `$HOME/bin`):
 
 ```sh
 sudo curl -sLo /usr/local/bin/tincd "https://github.com/timonier/tinc/raw/master/bin/tincd"
@@ -38,3 +40,4 @@ __Note__: Use the script `bin/build` to test your modifications locally.
 * [tinc](https://www.tinc-vpn.org/)
 * [tincd options](https://linux.die.net/man/8/tincd)
 * [image "timonier/tinc"](https://hub.docker.com/r/timonier/tinc/)
+* [timonier/dumb-entrypoint](https://github.com/timonier/dumb-entrypoint)
