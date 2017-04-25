@@ -1,16 +1,16 @@
-FROM alpine:3.4
+FROM alpine:latest
 
 LABEL \
     maintainer="Morgan Auchede <morgan.auchede@gmail.com>"
 
 ENV \
-    TINC_VERSION=1.0.28
+    TINC_VERSION=latest
 
-RUN set -x \
+RUN set -eux \
 
     # Install packages
 
-    && apk add --no-cache --no-progress --virtual build_deps \
+    && apk add --no-cache --no-progress --virtual BUILD_DEPS \
            build-base \
            ca-certificates \
            curl \
@@ -26,23 +26,25 @@ RUN set -x \
            lzo \
            zlib \
 
+    # Install dumb-entrypoint
+
+    && curl --location "https://github.com/timonier/dumb-entrypoint/raw/master/bin/installer" | INSTALL_DIRECTORY="/usr/sbin" sh -s install \
+
     # Install tinc
 
-    && curl -sL "https://www.tinc-vpn.org/packages/tinc-${TINC_VERSION}.tar.gz" | tar fxz - -C /tmp \
-    && sh -c "cd /tmp/tinc-${TINC_VERSION} && ./configure --enable-jumbograms --enable-lzo --enable-tunemu --enable-zlib --localstatedir=/var --prefix=/usr --sysconfdir=/etc" \
-    && make -C /tmp/tinc-${TINC_VERSION} \
-    && make -C /tmp/tinc-${TINC_VERSION} install \
+    && export $(curl "https://raw.githubusercontent.com/timonier/version-lister/release/generated/tinc/${TINC_VERSION}" | xargs) \
 
-    # Install timonier/dumb-entrypoint
-
-    && curl -sL "https://github.com/timonier/dumb-entrypoint/raw/master/bin/installer" | INSTALL_DIRECTORY="/usr/sbin" sh -s install \
+    && curl --location "https://www.tinc-vpn.org/packages/tinc-${TINC_VERSION}.tar.gz" | tar --directory /tmp --extract --gzip \
+    && sh -c "cd '/tmp/tinc-${TINC_VERSION}' && ./configure --enable-jumbograms --enable-lzo --enable-tunemu --enable-zlib --localstatedir=/var --prefix=/usr --sysconfdir=/etc" \
+    && make --directory "/tmp/tinc-${TINC_VERSION}" \
+    && make --directory "/tmp/tinc-${TINC_VERSION}" install \
 
     # Clean
 
     && apk del --no-progress \
-           build_deps \
+           BUILD_DEPS \
 
-    && rm -rf \
+    && rm -f -r \
            /tmp/*
 
-ENTRYPOINT [ "/usr/sbin/dumb-init" , "--" , "/usr/sbin/dumb-entrypoint" ]
+ENTRYPOINT [ "dumb-init" , "--" , "dumb-entrypoint" ]

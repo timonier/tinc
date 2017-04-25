@@ -1,24 +1,20 @@
 #!/bin/bash
-
-if [ $(/usr/bin/id -u) -ne 0 ] ; then
-    echo "Impossible to run tincd without root privileges." 1>&2
-    exit 1
-fi
+set -u
 
 for i in $(seq 1 $#); do
-    KEY=${@:${i}:1}
+    KEY="${*:${i}:1}"
 
     case ${KEY} in
         -c*)
             if [ -n "${KEY#*c}" ]; then
-                CONFIGURATION_FOLDER=${KEY#*c}
+                CONFIGURATION_FOLDER="${KEY#*c}"
             else
-                CONFIGURATION_FOLDER=${@:$((i+1)):1}
+                CONFIGURATION_FOLDER="${*:$((i+1)):1}"
             fi
         ;;
 
         --config)
-            CONFIGURATION_FOLDER=${@:$((i+1)):1}
+            CONFIGURATION_FOLDER="${*:$((i+1)):1}"
         ;;
 
         --config=*)
@@ -28,14 +24,12 @@ for i in $(seq 1 $#); do
 done
 
 docker run \
-    -i=$([ -t 0 ] && echo "true" || echo "false") \
-    -t=$([ -t 0 ] && echo "true" || echo "false") \
-    -v /etc/group:/etc/group:ro \
-    -v /etc/localtime:/etc/localtime:ro \
-    -v /etc/passwd:/etc/passwd:ro \
-    -v /etc/timezone:/etc/timezone:ro \
-    -v "${CONFIGURATION_FOLDER:-/etc/tinc}:${CONFIGURATION_FOLDER:-/etc/tinc}" \
     --cap-add NET_ADMIN \
-    --device=/dev/net/tun \
+    --device /dev/net/tun \
+    --interactive="$([ -t 0 ] && echo "true" || echo "false")" \
     --rm \
-    ${IMAGE:-timonier/tinc}:${TAG:-1.0.28} /usr/sbin/tincd "$@"
+    --tty="$([ -t 0 ] && echo "true" || echo "false")" \
+    --volume /etc/group:/etc/group:ro \
+    --volume /etc/passwd:/etc/passwd:ro \
+    --volume "${CONFIGURATION_FOLDER:-/etc/tinc}:${CONFIGURATION_FOLDER:-/etc/tinc}" \
+    "${IMAGE:-timonier/tinc}:${TAG:-latest}" tincd "$@"

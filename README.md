@@ -4,25 +4,34 @@ A VPN daemon
 
 ## Installation
 
-Copy the script `bin/tincd` into your executable folder (like `/usr/local/bin` or `$HOME/bin`):
+Copy `bin/tincd` into your executable folder (like `/usr/local/bin` or `$HOME/bin`):
 
 ```sh
-sudo curl -sLo /usr/local/bin/tincd "https://github.com/timonier/tinc/raw/master/bin/tincd"
+sudo curl --location --output /usr/local/bin/tincd "https://github.com/timonier/tinc/raw/master/bin/tincd"
 sudo chmod +x /usr/local/bin/tincd
 ```
 
 Linux users can use the [installer](https://github.com/timonier/tinc/blob/master/bin/installer):
 
 ```sh
-curl -sL "https://github.com/timonier/tinc/raw/master/bin/installer" | sudo sh -s install
+curl --location "https://github.com/timonier/tinc/raw/master/bin/installer" | sudo sh -s install
 ```
 
 ## Usage
 
-Run the script via `tincd`.
+Run the command `tincd`:
 
 ```sh
-tincd --net demo --user nobody
+# See all tincd options
+
+tincd --help
+
+# Run tincd
+
+tinc \
+    --config /etc/tinc \
+    --net demo \
+    --user nobody
 ```
 
 ## Contributing
@@ -37,7 +46,7 @@ __Note__: Use the script `bin/build` to test your modifications locally.
 
 ## Links
 
-* [tinc](https://www.tinc-vpn.org/)
-* [tincd options](https://linux.die.net/man/8/tincd)
 * [image "timonier/tinc"](https://hub.docker.com/r/timonier/tinc/)
 * [timonier/dumb-entrypoint](https://github.com/timonier/dumb-entrypoint)
+* [timonier/version-lister](https://github.com/timonier/version-lister)
+* [tinc](https://www.tinc-vpn.org/)

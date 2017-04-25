@@ -1,4 +1,5 @@
 #!/bin/sh
-cd "`dirname "$0"`/../src"
+set -eux
+cd "$(dirname "$0")/../src"
 
-docker build -t ${IMAGE:-timonier/tinc}:${TAG:-1.0.28} .
+docker build --tag "${IMAGE:-timonier/tinc}:${TAG:-latest}" .
