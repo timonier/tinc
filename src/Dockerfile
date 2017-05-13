@@ -6,7 +6,7 @@ LABEL \
 ENV \
     TINC_VERSION=latest
 
-RUN set -eux \
+RUN set -ex \
 
     # Install packages
 
@@ -26,9 +26,11 @@ RUN set -eux \
            lzo \
            zlib \
 
-    # Install dumb-entrypoint
+    # Install timonier/dumb-entrypoint
 
-    && curl --location "https://github.com/timonier/dumb-entrypoint/raw/master/bin/installer" | INSTALL_DIRECTORY="/usr/sbin" sh -s install \
+    && curl --location "https://github.com/timonier/dumb-entrypoint/raw/master/src/dumb-entrypoint/installer" | INSTALL_DIRECTORY="/usr/sbin" sh -s -- install \
+    && curl --location "https://github.com/timonier/dumb-entrypoint/raw/master/src/dumb-init/installer" | INSTALL_DIRECTORY="/usr/sbin" sh -s -- install \
+    && curl --location "https://github.com/timonier/dumb-entrypoint/raw/master/src/gosu/installer" | INSTALL_DIRECTORY="/usr/sbin" sh -s -- install \
 
     # Install tinc
 

@@ -1,5 +1,11 @@
 #!/bin/bash
-set -u
+set -e
+
+# Check environment
+
+export PATH=$(echo "${PATH}:/usr/sbin" | awk -v RS=":" -v ORS=":" '!a[$1]++{if (NR > 1) printf ORS; printf $a[$1]}')
+
+# Run command
 
 for i in $(seq 1 $#); do
     KEY="${*:${i}:1}"
@@ -26,7 +32,7 @@ done
 docker run \
     --cap-add NET_ADMIN \
     --device /dev/net/tun \
-    --interactive="$([ -t 0 ] && echo "true" || echo "false")" \
+    --interactive \
     --rm \
     --tty="$([ -t 0 ] && echo "true" || echo "false")" \
     --volume /etc/group:/etc/group:ro \
