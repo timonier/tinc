@@ -4,13 +4,6 @@ A VPN daemon
 
 ## Installation
 
-Copy `bin/tincd` into your executable folder (like `/usr/local/bin` or `$HOME/bin`):
-
-```sh
-sudo curl --location --output /usr/local/bin/tincd "https://github.com/timonier/tinc/raw/master/bin/tincd"
-sudo chmod +x /usr/local/bin/tincd
-```
-
 Linux users can use the [installer](https://github.com/timonier/tinc/blob/master/bin/installer):
 
 ```sh

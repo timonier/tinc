@@ -38,4 +38,4 @@ docker run \
     --volume /etc/group:/etc/group:ro \
     --volume /etc/passwd:/etc/passwd:ro \
     --volume "${CONFIGURATION_FOLDER:-/etc/tinc}:${CONFIGURATION_FOLDER:-/etc/tinc}" \
-    "${IMAGE:-timonier/tinc}:${TAG:-latest}" tincd "$@"
+    "${IMAGE:-timonier/tinc}:${TAG:-latest}" "$(basename "$0")" "$@"

@@ -25,7 +25,7 @@ fi
 
 case "$1" in
     install )
-        curl --location --output /usr/local/bin/tincd "https://github.com/timonier/tinc/raw/master/bin/tincd"
+        curl --location --output /usr/local/bin/tincd "https://github.com/timonier/tinc/raw/master/bin/cmd"
         chmod +x /usr/local/bin/tincd
     ;;
 
