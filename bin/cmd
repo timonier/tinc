@@ -1,42 +1,26 @@
 #!/bin/bash
-set -e
-
-# Check environment
-
-export PATH=$(echo "${PATH}:/usr/sbin:/sbin:/bin" | awk -v RS=":" -v ORS=":" '!a[$1]++{if (NR > 1) printf ORS; printf $a[$1]}')
-
-# Run command
+set -e -u
 
 for i in $(seq 1 $#); do
     KEY="${*:${i}:1}"
 
-    case ${KEY} in
+    case "${KEY}" in
         -c*)
             if [ -n "${KEY#*c}" ]; then
                 CONFIGURATION_FOLDER="${KEY#*c}"
             else
-                CONFIGURATION_FOLDER="${*:$((i+1)):1}"
+                CONFIGURATION_FOLDER="${*:$((i + 1)):1}"
             fi
-        ;;
+            ;;
 
         --config)
-            CONFIGURATION_FOLDER="${*:$((i+1)):1}"
-        ;;
+            CONFIGURATION_FOLDER="${*:$((i + 1)):1}"
+            ;;
 
         --config=*)
             CONFIGURATION_FOLDER="${KEY#*=}"
-        ;;
+            ;;
     esac
 done
 
-docker run \
-    --cap-add NET_ADMIN \
-    --device /dev/net/tun \
-    --init \
-    --interactive \
-    --rm \
-    --tty="$([ -t 0 ] && echo "true" || echo "false")" \
-    --volume /etc/group:/etc/group:ro \
-    --volume /etc/passwd:/etc/passwd:ro \
-    --volume "${CONFIGURATION_FOLDER:-/etc/tinc}:${CONFIGURATION_FOLDER:-/etc/tinc}" \
-    "${IMAGE:-timonier/tinc}:${TAG:-latest}" "$(basename "$0")" "$@"
+docker run --cap-add NET_ADMIN --device /dev/net/tun --init --interactive --rm --tty="$([ -t 0 ] && echo "true" || echo "false")" --volume /etc/group:/etc/group:ro --volume /etc/passwd:/etc/passwd:ro --volume "${CONFIGURATION_FOLDER:-/etc/tinc}":"${CONFIGURATION_FOLDER:-/etc/tinc}" "${IMAGE:-timonier/tinc}":"${TAG:-latest}" "$(basename "$0")" "$@"
