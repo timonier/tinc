@@ -4,8 +4,6 @@ A VPN daemon
 
 ## Installation
 
-Linux users can use the [installer](https://github.com/timonier/tinc/blob/master/bin/installer):
-
 ```sh
 # Define installation folder
 
